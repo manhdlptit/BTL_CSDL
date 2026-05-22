@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='css/reset.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/nhap_hang.css') }}"
+    />
+    <title>Nhập Hàng Vào Kho</title>
+  </head>
+  <body>
+    <div class="card">
+      <div class="card-header">
+        <h2>Tạo Phiếu Nhập Hàng</h2>
+      </div>
+      <div class="card-body">
+        <form
+          id="formNhapHang"
+          action="{{ url_for('nhap_hang.nhan_du_lieu_nhap_hang') }}"
+          method="POST"
+        >
+          <div class="form-group">
+            <label>Hình thức nhập hàng</label>
+            <div class="radio-group">
+              <label>
+                <input
+                  type="radio"
+                  name="loai_nhap"
+                  value="cu"
+                  checked
+                  onclick="toggleProductForm('cu')"
+                />
+                Sản phẩm có sẵn trong kho
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="loai_nhap"
+                  value="moi"
+                  onclick="toggleProductForm('moi')"
+                />
+                Thêm & Nhập sản phẩm mới
+              </label>
+            </div>
+          </div>
+
+          <div id="vung_san_pham_cu" class="form-group">
+            <label for="id_san_pham">Chọn sản phẩm từ kho</label>
+            <select id="id_san_pham" name="id_san_pham">
+              <option value="">-- Chọn sản phẩm --</option>
+              {% for sp in danh_sach_san_pham %}
+              <option value="{{ sp.id_san_pham }}">
+                {{ sp.ten_san_pham }} [Mã: {{ sp.ma_san_pham }}] - Tồn: {{
+                sp.so_luong_ton_kho if sp.so_luong_ton_kho else 0 }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div id="vung_san_pham_moi" class="hidden">
+            <div class="section-title">Thông tin sản phẩm mới</div>
+
+            <div class="form-group">
+              <label for="ma_san_pham"
+                >Mã sản phẩm <span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                id="ma_san_pham"
+                name="ma_san_pham"
+                placeholder="Ví dụ: SP001"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="ten_san_pham"
+                >Tên sản phẩm <span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                id="ten_san_pham"
+                name="ten_san_pham"
+                placeholder="Ví dụ: Áo thun Nam"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="id_loai_san_pham"
+                >Danh mục / Loại sản phẩm
+                <span style="color: red">*</span></label
+              >
+              <select id="id_loai_san_pham" name="id_loai_san_pham">
+                <option value="">-- Chọn loại sản phẩm --</option>
+                <option value="1">Áo khoác</option>
+                <option value="2">Áo phông</option>
+                <option value="3">Áo dài tay</option>
+                <option value="4">Quần đùi</option>
+                <option value="5">Quần dài</option>
+                <option value="6">Giày</option>
+                <option value="7">Dép</option>
+                <option value="8">Phụ kiện kết hợp</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="gia_ban"
+                >Giá bán dự kiến (đ) <span style="color: red">*</span></label
+              >
+              <input
+                type="number"
+                id="gia_ban"
+                name="gia_ban"
+                min="0"
+                placeholder="Ví dụ: 120000"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="mo_ta">Mô tả sản phẩm</label>
+              <textarea
+                id="mo_ta"
+                name="mo_ta"
+                rows="2"
+                placeholder="Nhập mô tả ngắn..."
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="section-title">Thông tin số lượng & giá nhập</div>
+
+          <div class="form-group">
+            <label for="so_luong"
+              >Số lượng nhập <span style="color: red">*</span></label
+            >
+            <input
+              type="number"
+              id="so_luong"
+              name="so_luong"
+              min="1"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="don_gia"
+              >Đơn giá nhập (đ) <span style="color: red">*</span></label
+            >
+            <input type="number" id="don_gia" name="don_gia" min="0" required />
+          </div>
+
+          <button type="submit" class="btn-submit">Xác nhận nhập hàng</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Hàm ẩn hiện các khu vực nhập liệu dựa trên radio button
+      function toggleProductForm(type) {
+        const vungCu = document.getElementById("vung_san_pham_cu");
+        const vungMoi = document.getElementById("vung_san_pham_moi");
+
+        // Các thẻ input cần bật/tắt thuộc tính "required" động
+        const reqInputs = [
+          "ma_san_pham",
+          "ten_san_pham",
+          "id_loai_san_pham",
+          "gia_ban",
+        ];
+
+        if (type === "moi") {
+          vungCu.classList.add("hidden");
+          vungMoi.classList.remove("hidden");
+          document.getElementById("id_san_pham").required = false;
+
+          reqInputs.forEach(
+            (id) => (document.getElementById(id).required = true),
+          );
+        } else {
+          vungCu.classList.remove("hidden");
+          vungMoi.classList.add("hidden");
+          document.getElementById("id_san_pham").required = true;
+
+          reqInputs.forEach(
+            (id) => (document.getElementById(id).required = false),
+          );
+        }
+      }
+
+      // Khởi chạy cấu hình required ban đầu cho sản phẩm cũ
+      document.getElementById("id_san_pham").required = true;
+
+      // Validation trước khi gửi Form
+      document
+        .getElementById("formNhapHang")
+        .addEventListener("submit", function (e) {
+          const loaiNhap = document.querySelector(
+            'input[name="loai_nhap"]:checked',
+          ).value;
+          const soLuong = parseInt(document.getElementById("so_luong").value);
+          const donGia = parseInt(document.getElementById("don_gia").value);
+
+          if (
+            loaiNhap === "cu" &&
+            !document.getElementById("id_san_pham").value
+          ) {
+            e.preventDefault();
+            alert("Vui lòng chọn một sản phẩm cần nhập!");
+            return;
+          }
+
+          if (isNaN(soLuong) || soLuong <= 0) {
+            e.preventDefault();
+            alert("Số lượng nhập kho phải lớn hơn 0!");
+            return;
+          }
+
+          if (isNaN(donGia) || donGia < 0) {
+            e.preventDefault();
+            alert("Đơn giá nhập hàng không hợp lệ!");
+            return;
+          }
+
+          if (loaiNhap === "moi") {
+            const giaBan = parseInt(document.getElementById("gia_ban").value);
+            if (giaBan < donGia) {
+              const tiepTuc = confirm(
+                "Cảnh báo: Giá bán dự kiến đang nhỏ hơn Giá nhập kho. Bạn vẫn muốn tiếp tục?",
+              );
+              if (!tiepTuc) {
+                e.preventDefault();
+                return;
+              }
+            }
+          }
+
+          const xacNhan = confirm("Xác nhận tạo phiếu nhập kho này?");
+          if (!xacNhan) e.preventDefault();
+        });
+    </script>
+  </body>
+</html>

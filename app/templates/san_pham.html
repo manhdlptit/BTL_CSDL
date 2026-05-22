@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/reset.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/san_pham.css') }}"
+    />
+    <title>Cửa Hàng Thời Trang Trendy</title>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="#" class="logo" onclick="switchTab('san-pham')">Trendy Shop</a>
+
+        <div class="search-box">
+          <input type="text" placeholder="Tìm kiếm quần áo, phụ kiện..." />
+          <button type="submit">🔍</button>
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a id="nav-san-pham" class="active" onclick="switchTab('san-pham')"
+              >Sản phẩm</a
+            >
+          </li>
+          <li class="nav-item">
+            <a id="nav-gio-hang" onclick="switchTab('gio-hang')">Giỏ hàng</a>
+          </li>
+          <li class="nav-item">
+            <a id="nav-thong-tin" onclick="switchTab('thong-tin')"
+              >Thông tin cá nhân</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <main class="main-content">
+      <div id="tab-san-pham" class="tab-content active">
+        <h2 style="margin-bottom: 20px">Sản Phẩm Mới Nhất</h2>
+        <div class="product-grid">
+          <div class="product-card">
+            <div class="product-img">Hình ảnh áo thun</div>
+            <div class="product-info">
+              <div class="product-title">Áo Thun Oversize Unisex</div>
+              <div class="product-price">250.000 đ</div>
+              <button class="btn-add-cart">Thêm vào giỏ</button>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-img">Hình ảnh quần jean</div>
+            <div class="product-info">
+              <div class="product-title">Quần Jean Baggy Nam/Nữ</div>
+              <div class="product-price">450.000 đ</div>
+              <button class="btn-add-cart">Thêm vào giỏ</button>
+            </div>
+          </div>
+
+          <!-- Sản phẩm 3 -->
+          <div class="product-card">
+            <div class="product-img">Hình ảnh áo khoác</div>
+            <div class="product-info">
+              <div class="product-title">Áo Khoác Bomber Local Brand</div>
+              <div class="product-price">590.000 đ</div>
+              <button class="btn-add-cart">Thêm vào giỏ</button>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-img">Hình ảnh váy</div>
+            <div class="product-info">
+              <div class="product-title">Váy Hai Dây Dáng Dài</div>
+              <div class="product-price">320.000 đ</div>
+              <button class="btn-add-cart">Thêm vào giỏ</button>
+            </div>
+          </div>
+          {%for san_pham in nhieu_san_pham%}
+          <div class="product-card">
+            <div class="product-img">{{san_pham.img_url}}</div>
+            <div class="product-info">
+              <div class="product-title">{{san_pham.ten_san_pham}}</div>
+              <div class="product-price">{{san_pham.gia_ban}} Đ</div>
+              <button class="btn-add-cart">Thêm vào giỏ</button>
+            </div>
+          </div>
+          {%endfor%}
+        </div>
+      </div>
+
+      <div id="tab-gio-hang" class="tab-content">
+        <h2 style="margin-bottom: 20px">Giỏ Hàng Của Bạn</h2>
+        <div class="cart-container">
+          <div class="cart-item">
+            <div>
+              <h4>Áo Thun Oversize Unisex</h4>
+              <p style="color: #666">Số lượng: 1</p>
+            </div>
+            <div style="font-weight: bold">250.000 đ</div>
+          </div>
+          <div class="cart-item">
+            <div>
+              <h4>Quần Jean Baggy Nam/Nữ</h4>
+              <p style="color: #666">Số lượng: 1</p>
+            </div>
+            <div style="font-weight: bold">450.000 đ</div>
+          </div>
+          <div class="cart-total">
+            Tổng tiền: <span style="color: #ff4757">700.000 đ</span>
+          </div>
+          <button class="btn-save" style="margin-top: 20px; width: 100%">
+            Tiến Hành Thanh Toán
+          </button>
+        </div>
+      </div>
+
+      <div id="tab-thong-tin" class="tab-content">
+        <div class="profile-container">
+          <h2 style="margin-bottom: 20px; text-align: center">
+            Thông Tin Cá Nhân
+          </h2>
+          <form
+            onsubmit="
+              event.preventDefault();
+              alert('Đã lưu thay đổi!');
+            "
+          >
+            <div class="form-group">
+              <label for="username">Họ và Tên</label>
+              <input type="text" id="username" value="Nguyễn Văn A" />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" value="nguyenvana@gmail.com" />
+            </div>
+            <div class="form-group">
+              <label for="phone">Số điện thoại</label>
+              <input type="tel" id="phone" value="0912345678" />
+            </div>
+            <div class="form-group">
+              <label for="address">Địa chỉ nhận hàng</label>
+              <input
+                type="text"
+                id="address"
+                value="123 Đường Lê Lợi, Quận 1, TP. HCM"
+              />
+            </div>
+            <button type="submit" class="btn-save">Lưu Thay Đổi</button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      function switchTab(tabName) {
+        const contents = document.querySelectorAll(".tab-content");
+        contents.forEach((content) => content.classList.remove("active"));
+        const navLinks = document.querySelectorAll(".nav-item a");
+        navLinks.forEach((link) => link.classList.remove("active"));
+        document.getElementById("tab-" + tabName).classList.add("active");
+        document.getElementById("nav-" + tabName).classList.add("active");
+      }
+    </script>
+  </body>
+</html>
