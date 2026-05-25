@@ -21,7 +21,7 @@
       <div class="card-body">
         <form
           id="formNhapHang"
-          action="{{ url_for('nhap_hang.nhan_du_lieu_nhap_hang') }}"
+          action="{{ url_for('admin.nhan_du_lieu_nhap_hang') }}"
           method="POST"
         >
           <div class="form-group">
@@ -86,6 +86,18 @@
                 id="ten_san_pham"
                 name="ten_san_pham"
                 placeholder="Ví dụ: Áo thun Nam"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="kich_co"
+                >Kích cỡ (size) <span style="color: red">*</span></label
+              >
+              <input
+                type="text"
+                id="kich_co"
+                name="kich_co"
+                placeholder="Ví dụ: S"
               />
             </div>
 
@@ -159,12 +171,10 @@
     </div>
 
     <script>
-      // Hàm ẩn hiện các khu vực nhập liệu dựa trên radio button
       function toggleProductForm(type) {
         const vungCu = document.getElementById("vung_san_pham_cu");
         const vungMoi = document.getElementById("vung_san_pham_moi");
 
-        // Các thẻ input cần bật/tắt thuộc tính "required" động
         const reqInputs = [
           "ma_san_pham",
           "ten_san_pham",
@@ -191,10 +201,8 @@
         }
       }
 
-      // Khởi chạy cấu hình required ban đầu cho sản phẩm cũ
       document.getElementById("id_san_pham").required = true;
 
-      // Validation trước khi gửi Form
       document
         .getElementById("formNhapHang")
         .addEventListener("submit", function (e) {

@@ -19,8 +19,15 @@
         <a href="#" class="logo" onclick="switchTab('san-pham')">Trendy Shop</a>
 
         <div class="search-box">
-          <input type="text" placeholder="Tìm kiếm quần áo, phụ kiện..." />
-          <button type="submit">🔍</button>
+          <form action="{{ url_for('user.san_pham') }}" method="get">
+            <input
+              type="text"
+              placeholder="Tìm kiếm quần áo, phụ kiện..."
+              name="q"
+              value="{{ tim_kiem }}"
+            />
+            <button type="submit">🔍</button>
+          </form>
         </div>
 
         <ul class="nav-menu">
@@ -37,6 +44,11 @@
               >Thông tin cá nhân</a
             >
           </li>
+          <li class="nav-item">
+            <a id="nav-dang-xuat" href="{{ url_for('auth.logout') }}"
+              >Đăng xuất</a
+            >
+          </li>
         </ul>
       </div>
     </nav>
@@ -44,79 +56,47 @@
       <div id="tab-san-pham" class="tab-content active">
         <h2 style="margin-bottom: 20px">Sản Phẩm Mới Nhất</h2>
         <div class="product-grid">
-          <div class="product-card">
-            <div class="product-img">Hình ảnh áo thun</div>
-            <div class="product-info">
-              <div class="product-title">Áo Thun Oversize Unisex</div>
-              <div class="product-price">250.000 đ</div>
-              <button class="btn-add-cart">Thêm vào giỏ</button>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <div class="product-img">Hình ảnh quần jean</div>
-            <div class="product-info">
-              <div class="product-title">Quần Jean Baggy Nam/Nữ</div>
-              <div class="product-price">450.000 đ</div>
-              <button class="btn-add-cart">Thêm vào giỏ</button>
-            </div>
-          </div>
-
-          <!-- Sản phẩm 3 -->
-          <div class="product-card">
-            <div class="product-img">Hình ảnh áo khoác</div>
-            <div class="product-info">
-              <div class="product-title">Áo Khoác Bomber Local Brand</div>
-              <div class="product-price">590.000 đ</div>
-              <button class="btn-add-cart">Thêm vào giỏ</button>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <div class="product-img">Hình ảnh váy</div>
-            <div class="product-info">
-              <div class="product-title">Váy Hai Dây Dáng Dài</div>
-              <div class="product-price">320.000 đ</div>
-              <button class="btn-add-cart">Thêm vào giỏ</button>
-            </div>
-          </div>
           {%for san_pham in nhieu_san_pham%}
           <div class="product-card">
             <div class="product-img">{{san_pham.img_url}}</div>
             <div class="product-info">
               <div class="product-title">{{san_pham.ten_san_pham}}</div>
               <div class="product-price">{{san_pham.gia_ban}} Đ</div>
-              <button class="btn-add-cart">Thêm vào giỏ</button>
+              <div
+                style="
+                  display: flex;
+                  gap: 10px;
+                  align-items: center;
+                  margin-bottom: 10px;
+                "
+              >
+                <input
+                  type="number"
+                  class="quantity-input"
+                  min="1"
+                  value="1"
+                  style="width: 60px; padding: 8px"
+                />
+                <button
+                  class="btn-add-cart"
+                  data-id="{{ san_pham.id_san_pham }}"
+                  data-name="{{ san_pham.ten_san_pham }}"
+                  data-price="{{ san_pham.gia_ban }}"
+                >
+                  Thêm vào giỏ
+                </button>
+              </div>
             </div>
           </div>
           {%endfor%}
         </div>
       </div>
-
+      {% if tim_kiem %}
+      <p>Kết quả tìm kiếm cho từ khóa: <strong>"{{ tim_kiem }}"</strong></p>
+      {% endif %}
       <div id="tab-gio-hang" class="tab-content">
         <h2 style="margin-bottom: 20px">Giỏ Hàng Của Bạn</h2>
-        <div class="cart-container">
-          <div class="cart-item">
-            <div>
-              <h4>Áo Thun Oversize Unisex</h4>
-              <p style="color: #666">Số lượng: 1</p>
-            </div>
-            <div style="font-weight: bold">250.000 đ</div>
-          </div>
-          <div class="cart-item">
-            <div>
-              <h4>Quần Jean Baggy Nam/Nữ</h4>
-              <p style="color: #666">Số lượng: 1</p>
-            </div>
-            <div style="font-weight: bold">450.000 đ</div>
-          </div>
-          <div class="cart-total">
-            Tổng tiền: <span style="color: #ff4757">700.000 đ</span>
-          </div>
-          <button class="btn-save" style="margin-top: 20px; width: 100%">
-            Tiến Hành Thanh Toán
-          </button>
-        </div>
+        <div class="cart-container"></div>
       </div>
 
       <div id="tab-thong-tin" class="tab-content">
@@ -124,31 +104,47 @@
           <h2 style="margin-bottom: 20px; text-align: center">
             Thông Tin Cá Nhân
           </h2>
-          <form
-            onsubmit="
-              event.preventDefault();
-              alert('Đã lưu thay đổi!');
-            "
-          >
+          <form id="form-profile" onsubmit="capNhatThongTin(event)">
             <div class="form-group">
               <label for="username">Họ và Tên</label>
-              <input type="text" id="username" value="Nguyễn Văn A" />
+              <input
+                type="text"
+                id="username"
+                name="ten_dang_nhap"
+                value="{{ du_lieu_user.ten_dang_nhap }}"
+              />
             </div>
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" id="email" value="nguyenvana@gmail.com" />
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ du_lieu_user.email }}"
+              />
             </div>
             <div class="form-group">
               <label for="phone">Số điện thoại</label>
-              <input type="tel" id="phone" value="0912345678" />
+              <input
+                type="tel"
+                id="phone"
+                name="so_dien_thoai"
+                value="{{ du_lieu_user.so_dien_thoai }}"
+              />
             </div>
             <div class="form-group">
               <label for="address">Địa chỉ nhận hàng</label>
               <input
                 type="text"
                 id="address"
-                value="123 Đường Lê Lợi, Quận 1, TP. HCM"
+                name="dia_chi"
+                value="{{ du_lieu_user.dia_chi }}"
               />
+              {% if du_lieu_user.dia_chi == 'chua_them' %}
+              <p style="color: #ff4757; margin-top: 5px">
+                ⚠️ Vui lòng cập nhật địa chỉ để có thể đặt hàng
+              </p>
+              {% endif %}
             </div>
             <button type="submit" class="btn-save">Lưu Thay Đổi</button>
           </form>
@@ -164,6 +160,206 @@
         navLinks.forEach((link) => link.classList.remove("active"));
         document.getElementById("tab-" + tabName).classList.add("active");
         document.getElementById("nav-" + tabName).classList.add("active");
+      }
+
+      let gioHang = JSON.parse(localStorage.getItem("trendy_cart")) || [];
+      document.addEventListener("DOMContentLoaded", function () {
+        capNhatGiaoDienGioHang();
+
+        document.body.addEventListener("click", function (event) {
+          if (event.target.classList.contains("btn-add-cart")) {
+            const button = event.target;
+            const id = button.getAttribute("data-id");
+            const name = button.getAttribute("data-name");
+            const price = parseFloat(button.getAttribute("data-price"));
+            const quantityInput =
+              button.parentElement.querySelector(".quantity-input");
+            const soLuong = parseInt(quantityInput.value) || 1;
+
+            themVaoGioHang(id, name, price, soLuong);
+          }
+        });
+      });
+
+      function themVaoGioHang(id, name, price, soLuong = 1) {
+        const sanPhamTonTai = gioHang.find((item) => item.id === id);
+
+        if (sanPhamTonTai) {
+          sanPhamTonTai.soLuong += soLuong;
+        } else {
+          gioHang.push({
+            id: id,
+            name: name,
+            price: price,
+            soLuong: soLuong,
+          });
+        }
+
+        localStorage.setItem("trendy_cart", JSON.stringify(gioHang));
+
+        capNhatGiaoDienGioHang();
+
+        alert(`Đã thêm "${name}" vào giỏ hàng!`);
+      }
+
+      function capNhatGiaoDienGioHang() {
+        const cartContainer = document.querySelector(".cart-container");
+        if (!cartContainer) return;
+
+        if (gioHang.length === 0) {
+          cartContainer.innerHTML = `<p style="text-align:center; color:#666;">Giỏ hàng của bạn đang trống.</p>`;
+          return;
+        }
+
+        let htmlContent = "";
+        let tongTien = 0;
+
+        gioHang.forEach((item, index) => {
+          const thanhTien = item.price * item.soLuong;
+          tongTien += thanhTien;
+
+          htmlContent += `
+            <div class="cart-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee;">
+                <div style="flex: 1;">
+                    <h4>${item.name}</h4>
+                    <p style="color: #666">Giá: ${item.price.toLocaleString("vi-VN")} đ</p>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn-decrease" data-index="${index}" style="width: 30px; height: 30px; border: 1px solid #ccc; background: #fff; cursor: pointer;">−</button>
+                        <input type="number" class="quantity-value" data-index="${index}" value="${item.soLuong}" min="1" style="width: 50px; padding: 5px; text-align: center; border: 1px solid #ccc;" />
+                        <button class="btn-increase" data-index="${index}" style="width: 30px; height: 30px; border: 1px solid #ccc; background: #fff; cursor: pointer;">+</button>
+                        <button class="btn-remove" data-index="${index}" style="margin-left: 10px; padding: 5px 10px; background: #ff4757; color: white; border: none; cursor: pointer; border-radius: 4px;">Xóa</button>
+                    </div>
+                </div>
+                <div style="font-weight: bold; text-align: right;">${thanhTien.toLocaleString("vi-VN")} đ</div>
+            </div>
+        `;
+        });
+
+        htmlContent += `
+        <div class="cart-total" style="text-align: right; margin-top: 20px; font-size: 20px; font-weight: bold;">
+            Tổng tiền: <span style="color: #ff4757">${tongTien.toLocaleString("vi-VN")} đ</span>
+        </div>
+        <button class="btn-save" style="margin-top: 20px; width: 100%" onclick="tienHanhThanhToan()">
+            Tiến Hành Thanh Toán
+        </button>
+    `;
+
+        cartContainer.innerHTML = htmlContent;
+
+        document.querySelectorAll(".btn-increase").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const index = this.getAttribute("data-index");
+            gioHang[index].soLuong += 1;
+            localStorage.setItem("trendy_cart", JSON.stringify(gioHang));
+            capNhatGiaoDienGioHang();
+          });
+        });
+
+        document.querySelectorAll(".btn-decrease").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const index = this.getAttribute("data-index");
+            if (gioHang[index].soLuong > 1) {
+              gioHang[index].soLuong -= 1;
+            }
+            localStorage.setItem("trendy_cart", JSON.stringify(gioHang));
+            capNhatGiaoDienGioHang();
+          });
+        });
+
+        document.querySelectorAll(".btn-remove").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const index = this.getAttribute("data-index");
+            gioHang.splice(index, 1);
+            localStorage.setItem("trendy_cart", JSON.stringify(gioHang));
+            capNhatGiaoDienGioHang();
+          });
+        });
+
+        document.querySelectorAll(".quantity-value").forEach((input) => {
+          input.addEventListener("change", function () {
+            const index = this.getAttribute("data-index");
+            const newValue = parseInt(this.value) || 1;
+            if (newValue > 0) {
+              gioHang[index].soLuong = newValue;
+            } else {
+              this.value = gioHang[index].soLuong;
+            }
+            localStorage.setItem("trendy_cart", JSON.stringify(gioHang));
+            capNhatGiaoDienGioHang();
+          });
+        });
+      }
+
+      function tienHanhThanhToan() {
+        if (gioHang.length === 0) {
+          alert("Giỏ hàng trống, không thể thanh toán!");
+          return;
+        }
+
+        fetch("/user/thanh-toan", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            items: gioHang,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert("Thanh toán thành công! Cảm ơn bạn đã mua hàng.");
+              gioHang = [];
+              localStorage.removeItem("trendy_cart");
+              capNhatGiaoDienGioHang();
+            } else {
+              alert("Thanh toán thất bại: " + data.message);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Có lỗi xảy ra khi thanh toán!");
+          });
+      }
+
+      function capNhatThongTin(event) {
+        event.preventDefault();
+
+        const ten_dang_nhap = document.getElementById("username").value;
+        const email = document.getElementById("email").value;
+        const so_dien_thoai = document.getElementById("phone").value;
+        const dia_chi = document.getElementById("address").value;
+
+        if (!dia_chi.trim()) {
+          alert("Vui lòng nhập địa chỉ giao hàng!");
+          return;
+        }
+
+        fetch("/user/cap-nhat-thong-tin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ten_dang_nhap: ten_dang_nhap,
+            email: email,
+            so_dien_thoai: so_dien_thoai,
+            dia_chi: dia_chi,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert("Cập nhật thông tin thành công!");
+              location.reload();
+            } else {
+              alert("Cập nhật thất bại: " + data.message);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Có lỗi xảy ra khi cập nhật!");
+          });
       }
     </script>
   </body>

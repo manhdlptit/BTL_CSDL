@@ -45,6 +45,15 @@ body {
   width: 40%;
 }
 
+.search-box form {
+  display: flex;
+  align-items: center;
+  background: #f1f2f6;
+  padding: 8px 15px;
+  border-radius: 20px;
+  width: 100%;
+}
+
 .search-box input {
   border: none;
   background: none;
@@ -79,6 +88,16 @@ body {
 
 .nav-item a:hover,
 .nav-item a.active {
+  color: #ff4757;
+  background-color: #fff0f2;
+}
+
+#nav-dang-xuat {
+  background-color: black;
+  color: #fff;
+}
+
+#nav-dang-xuat:hover {
   background-color: #ff4757;
   color: #fff;
 }

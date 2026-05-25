@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng Ký - TrendyShop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='css/reset.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/signup.css') }}"
+    />
+  </head>
+  <body>
+    <div class="signup-container">
+      <div class="brand-header">
+        <h2 class="brand-name">TrendyShop</h2>
+        <p class="brand-subtitle">
+          Tạo tài khoản để nhận ngay ưu đãi thành viên
+        </p>
+      </div>
+
+      <form action="#" method="post">
+        <div class="group">
+          <label for="email">Email</label>
+          <div class="input-wrapper">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Ví dụ: trendyshop@gmail.com"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="group">
+          <label for="phone_number">Số điện thoại</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="phone_number"
+              name="phone_number"
+              placeholder="Ví dụ: 0123456789"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="group">
+          <label for="username">Tên đăng nhập</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Nhập tên đăng nhập"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="group">
+          <label for="password">Mật khẩu</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Tối thiểu 8 ký tự"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="group">
+          <label for="check_password">Xác nhận mật khẩu</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="check_password"
+              name="check_password"
+              placeholder="Nhập lại mật khẩu"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="btn">
+          <button type="submit">Đăng ký thành viên</button>
+        </div>
+
+        <div class="link-to-log-in">
+          <p class="desc-link-to-log-in">Đã có tài khoản?</p>
+          <a href="{{ url_for('auth.login') }}">Đăng nhập ngay</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

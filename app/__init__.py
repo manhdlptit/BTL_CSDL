@@ -1,10 +1,11 @@
 from dotenv import load_dotenv
 load_dotenv()
 import os
-from flask import Flask
+from flask import Flask, redirect, url_for
 from app.blueprints.model import db
-from app.blueprints.api import tab_api
-from app.blueprints.nhap_hang import nhap_hang
+from app.blueprints.user import user
+from app.blueprints.admin import admin
+from app.blueprints.auth import auth
 
 def create_app():
     app = Flask(__name__, template_folder="templates", static_folder="static")
@@ -14,9 +15,14 @@ def create_app():
 
     db.init_app(app)
 
-    app.register_blueprint(tab_api)
-    app.register_blueprint(nhap_hang)
+    app.register_blueprint(user)
+    app.register_blueprint(admin)
+    app.register_blueprint(auth)
 
+    @app.route("/")
+    def index():
+        return redirect(url_for("auth.login"))
+    
     with app.app_context():
         db.create_all()
     return app

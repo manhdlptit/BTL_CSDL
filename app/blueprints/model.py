@@ -5,16 +5,20 @@ class TaiKhoan(db.Model):
     __tablename__ = "tai_khoan"
     
     id_tai_khoan = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(255), nullable=False)        
-    vai_tro = db.Column(db.String(5), nullable=False)          
-    ten_dang_nhap = db.Column(db.String(16), nullable=False) 
-    mat_khau = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255))    
+    so_dien_thoai = db.Column(db.String(15))    
+    vai_tro = db.Column(db.String(5))          
+    ten_dang_nhap = db.Column(db.String(16)) 
+    mat_khau = db.Column(db.String(255))
+    dia_chi = db.Column(db.String(1000))
 
-    def __init__(self, email, vai_tro, ten_dang_nhap, mat_khau):
+    def __init__(self, email, so_dien_thoai, vai_tro, ten_dang_nhap, mat_khau, dia_chi):
         self.email = email
+        self.so_dien_thoai = so_dien_thoai
         self.vai_tro = vai_tro
         self.ten_dang_nhap = ten_dang_nhap
         self.mat_khau = mat_khau
+        self.dia_chi = dia_chi
 
 class LoaiSanPham(db.Model):
     __tablename__ = "loai_san_pham"
@@ -29,6 +33,7 @@ class SanPham(db.Model):
     id_san_pham = db.Column(db.Integer, primary_key = True)
     ma_san_pham  = db.Column(db.String(20))
     ten_san_pham  = db.Column(db.String(100))
+    kich_co = db.Column(db.String(5))
     mo_ta = db.Column(db.String(500))
     gia_nhap = db.Column(db.Integer)
     gia_ban = db.Column(db.Integer)
@@ -37,9 +42,10 @@ class SanPham(db.Model):
     id_loai_san_pham = db.Column(db.Integer, db.ForeignKey('loai_san_pham.id_loai_san_pham'), nullable=False)
     loai_san_pham = db.relationship('LoaiSanPham', backref=db.backref('danh_sach_san_pham', lazy=True))
     
-    def __init__(self, ma_san_pham, ten_san_pham, mo_ta, gia_nhap, gia_ban, so_luong_ton_kho, img_url, id_loai_san_pham):
+    def __init__(self, ma_san_pham, ten_san_pham, kich_co, mo_ta, gia_nhap, gia_ban, so_luong_ton_kho, img_url, id_loai_san_pham):
         self.ma_san_pham = ma_san_pham
         self.ten_san_pham = ten_san_pham
+        self.kich_co = kich_co
         self.mo_ta = mo_ta
         self.gia_nhap = gia_nhap
         self.gia_ban = gia_ban
@@ -65,8 +71,8 @@ class PhieuNhap(db.Model):
     __tablename__ = "phieu_nhap"
     
     id_phieu = db.Column(db.Integer, primary_key=True) 
-    tong_tien = db.Column(db.Integer, nullable=False)
-    ngay_nhap = db.Column(db.DateTime, nullable=False)
+    tong_tien = db.Column(db.Integer)
+    ngay_nhap = db.Column(db.DateTime)
 
     def __init__(self, tong_tien, ngay_nhap):
         self.tong_tien = tong_tien
