@@ -117,8 +117,11 @@ def chi_tiet_hoa_don(id_hoa_don):
     hoa_don = HoaDon.query.get(id_hoa_don)
     if not hoa_don:
         return "Không tìm thấy hoá đơn", 404
+    
+    id_tai_khoan = session.get('id_tai_khoan')
+    vai_tro = session.get('vai_tro')
 
-    if hoa_don.id_tai_khoan != session.get('id_tai_khoan'):
+    if hoa_don.id_tai_khoan != session.get('id_tai_khoan') and vai_tro != "admin":
         return "Bạn không có quyền xem hoá đơn này", 403
 
     chi_tiet = ChiTietHoaDon.query.filter_by(id_hoa_don=id_hoa_don).all()

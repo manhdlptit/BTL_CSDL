@@ -31,6 +31,9 @@
       <div class="menu">
         <a href="/nhap-hang">← Quay lại nhập hàng</a>
       </div>
+      <div class="menu">
+        <a href="/chi-tiet-hoa-don">Chi tiết từng hoá đơn</a>
+      </div>
 
       {% if danh_sach_hoa_don %}
       <table>
@@ -45,7 +48,10 @@
         </thead>
         <tbody>
           {% for hoa_don in danh_sach_hoa_don %}
-          <tr>
+          <tr
+            class="clickable-row"
+            onclick="window.location.href=`{{ url_for('invoice.chi_tiet_hoa_don', id_hoa_don=hoa_don.id_hoa_don) }}`"
+          >
             <td><strong>#{{ hoa_don.id_hoa_don }}</strong></td>
             <td>{{ hoa_don.tai_khoan.ten_dang_nhap }}</td>
             <td>

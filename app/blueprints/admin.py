@@ -100,6 +100,20 @@ def danh_sach_hoa_don():
                          danh_sach_hoa_don=danh_sach_hd,
                          tong_doanh_so=tong_doanh_so)
 
+@admin.route("/chi-tiet-hoa-don/<int:id_hoa_don>")
+def chi_tiet_hoa_don_admin(id_hoa_don):
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+    if session.get("vai_tro") != "admin":
+        return "Bạn không phải là admin, không được phép thực hiện trong trang này", 403
+
+    hoa_don = HoaDon.query.get(id_hoa_don)
+    if not hoa_don:
+        return "Không tìm thấy hoá đơn", 404
+
+    chi_tiet = ChiTietHoaDon.query.filter_by(id_hoa_don=id_hoa_don).all()
+    return render_template("chi_tiet_hoa_don.html", hoa_don=hoa_don, chi_tiet=chi_tiet)
+
 @admin.route("/thong-ke-doanh-so")
 def thong_ke_doanh_so():
     if not session.get('logged_in'):

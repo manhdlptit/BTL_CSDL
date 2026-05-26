@@ -6,6 +6,7 @@ from app.blueprints.model import db
 from app.blueprints.user import user
 from app.blueprints.admin import admin
 from app.blueprints.auth import auth
+from app.blueprints.invoice import invoice
 
 def create_app():
     app = Flask(__name__, template_folder="templates", static_folder="static")
@@ -18,6 +19,7 @@ def create_app():
     app.register_blueprint(user)
     app.register_blueprint(admin)
     app.register_blueprint(auth)
+    app.register_blueprint(invoice)
 
     @app.route("/")
     def index():
