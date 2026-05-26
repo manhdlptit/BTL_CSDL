@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 
-user = Blueprint("user", __name__, url_prefix="/user")
+user = Blueprint("user", __name__)
 
 @user.route("/san-pham")
 def san_pham():
@@ -30,9 +30,6 @@ def san_pham():
 
     if tim_kiem:
         nhieu_san_pham = SanPham.query.filter(SanPham.ten_san_pham.ilike(f"%{tim_kiem}%")).all()
-
-    # doi du lieu user
-    dia_chi = request.form.get("dia_chi")
 
 
 

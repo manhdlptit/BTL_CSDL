@@ -379,38 +379,38 @@
           return;
         }
 
-        fetch("/user/thanh-toan", {
+        fetch("{{ url_for('user.thanh_toan') }}", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            items: gioHang,
-          }),
+          body: JSON.stringify({ items: gioHang }),
         })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              const modal = document.getElementById("modal-hoa-don");
-              document.getElementById("invoice-id").textContent =
-                "#" + data.hoa_don_info.id_hoa_don;
-              document.getElementById("invoice-date").textContent =
-                data.hoa_don_info.ngay_ban;
-              document.getElementById("invoice-total").textContent =
-                data.hoa_don_info.tong_tien.toLocaleString("vi-VN") + " đ";
-
-              modal.style.display = "flex";
-
-              gioHang = [];
-              localStorage.removeItem("trendy_cart");
-              capNhatGiaoDienGioHang();
-            } else {
-              alert("Thanh toán thất bại: " + data.message);
+          .then((response) => {
+            if (!response.ok) {
+              return response.json().then((errData) => {
+                throw new Error(errData.message || "Lỗi hệ thống");
+              });
             }
+            return response.json();
+          })
+          .then((data) => {
+            const modal = document.getElementById("modal-hoa-don");
+            document.getElementById("invoice-id").textContent =
+              "#" + data.hoa_don_info.id_hoa_don;
+            document.getElementById("invoice-date").textContent =
+              data.hoa_don_info.ngay_ban;
+            document.getElementById("invoice-total").textContent =
+              data.hoa_don_info.tong_tien.toLocaleString("vi-VN") + " đ";
+
+            modal.style.display = "flex";
+            gioHang = [];
+            localStorage.removeItem("trendy_cart");
+            capNhatGiaoDienGioHang();
           })
           .catch((error) => {
             console.error("Error:", error);
-            alert("Có lỗi xảy ra khi thanh toán!");
+            alert("Thanh toán thất bại: " + error.message);
           });
       }
 
@@ -418,7 +418,7 @@
         const invoiceId = document
           .getElementById("invoice-id")
           .textContent.replace("#", "");
-        window.location.href = "/user/chi-tiet-hoa-don/" + invoiceId;
+        window.location.href = "/chi-tiet-hoa-don/" + invoiceId;
       }
 
       function donHangMoi() {
@@ -439,7 +439,7 @@
           return;
         }
 
-        fetch("/user/cap-nhat-thong-tin", {
+        fetch("{{ url_for('user.cap_nhat_thong_tin') }}", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -451,18 +451,23 @@
             dia_chi: dia_chi,
           }),
         })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              alert("Cập nhật thông tin thành công!");
-              location.reload();
-            } else {
-              alert("Cập nhật thất bại: " + data.message);
+          .then((response) => {
+            if (!response.ok) {
+              return response.json().then((errData) => {
+                throw new Error(
+                  errData.message || "Có lỗi xảy ra trên hệ thống",
+                );
+              });
             }
+            return response.json();
+          })
+          .then((data) => {
+            alert("Cập nhật thông tin thành công!");
+            location.reload();
           })
           .catch((error) => {
             console.error("Error:", error);
-            alert("Có lỗi xảy ra khi cập nhật!");
+            alert("Cập nhật thất bại: " + error.message);
           });
       }
     </script>
