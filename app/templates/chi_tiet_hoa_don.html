@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='css/reset.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/chi_tiet_hoa_don.css') }}"
+    />
+    <title>Chi tiết hoá đơn</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🧾 Hoá đơn mua hàng</h1>
+        <p style="color: #999; margin-top: 5px">
+          Mã hoá đơn: #{{ hoa_don.id_hoa_don }}
+        </p>
+      </div>
+
+      <div class="hoa_don_info">
+        <div class="info-item">
+          <span class="info-label">Ngày bán</span>
+          <span class="info-value"
+            >{{ hoa_don.ngay_ban.strftime('%d/%m/%Y %H:%M:%S') if
+            hoa_don.ngay_ban else 'N/A' }}</span
+          >
+        </div>
+        <div class="info-item">
+          <span class="info-label">Khách hàng</span>
+          <span class="info-value">{{ hoa_don.tai_khoan.ten_dang_nhap }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ hoa_don.tai_khoan.email }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Điện thoại</span>
+          <span class="info-value">{{ hoa_don.tai_khoan.so_dien_thoai }}</span>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Sản phẩm</th>
+            <th style="text-align: center">Số lượng</th>
+            <th style="text-align: right">Đơn giá</th>
+            <th style="text-align: right">Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ct in chi_tiet %}
+          <tr>
+            <td>{{ ct.san_pham.ten_san_pham }}</td>
+            <td style="text-align: center">{{ ct.so_luong }}</td>
+            <td class="gia">{{ '{:,}'.format(ct.don_gia) }} đ</td>
+            <td class="gia">{{ '{:,}'.format(ct.don_gia * ct.so_luong) }} đ</td>
+          </tr>
+          {% endfor %}
+          <tr class="tong">
+            <td colspan="2"></td>
+            <td style="text-align: right">Tổng cộng:</td>
+            <td class="gia">{{ '{:,}'.format(hoa_don.tong_tien) }} đ</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tong-tien-section">
+        <div class="tong-tien">
+          <div class="tong-tien-label">Tổng tiền thanh toán</div>
+          <div class="tong-tien-value">
+            {{ '{:,}'.format(hoa_don.tong_tien) }} đ
+          </div>
+        </div>
+      </div>
+
+      <div class="menu">
+        <a href="/user/san-pham" class="btn">← Quay lại cửa hàng</a>
+        <button onclick="window.print()" class="btn btn-print">
+          🖨 In hoá đơn
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

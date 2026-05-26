@@ -152,6 +152,89 @@
       </div>
     </main>
 
+    <div
+      id="modal-hoa-don"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <div
+        style="
+          background: white;
+          padding: 30px;
+          border-radius: 8px;
+          max-width: 500px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        "
+      >
+        <h2 style="text-align: center; color: #27ae60; margin-bottom: 20px">
+          ✓ Thanh Toán Thành Công!
+        </h2>
+
+        <div
+          style="
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+          "
+        >
+          <p style="margin-bottom: 10px">
+            <strong>Mã hoá đơn:</strong>
+            <span id="invoice-id" style="color: #667eea"></span>
+          </p>
+          <p style="margin-bottom: 10px">
+            <strong>Ngày bán:</strong> <span id="invoice-date"></span>
+          </p>
+          <p>
+            <strong>Tổng tiền:</strong>
+            <span
+              id="invoice-total"
+              style="color: #ff4757; font-weight: bold"
+            ></span>
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: center">
+          <button
+            onclick="xemChiTietHoaDon()"
+            style="
+              padding: 10px 20px;
+              background: #667eea;
+              color: white;
+              border: none;
+              border-radius: 5px;
+              cursor: pointer;
+            "
+          >
+            Xem Chi Tiết
+          </button>
+          <button
+            onclick="donHangMoi()"
+            style="
+              padding: 10px 20px;
+              background: #27ae60;
+              color: white;
+              border: none;
+              border-radius: 5px;
+              cursor: pointer;
+            "
+          >
+            Mua Thêm
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
       function switchTab(tabName) {
         const contents = document.querySelectorAll(".tab-content");
@@ -308,7 +391,16 @@
           .then((response) => response.json())
           .then((data) => {
             if (data.success) {
-              alert("Thanh toán thành công! Cảm ơn bạn đã mua hàng.");
+              const modal = document.getElementById("modal-hoa-don");
+              document.getElementById("invoice-id").textContent =
+                "#" + data.hoa_don_info.id_hoa_don;
+              document.getElementById("invoice-date").textContent =
+                data.hoa_don_info.ngay_ban;
+              document.getElementById("invoice-total").textContent =
+                data.hoa_don_info.tong_tien.toLocaleString("vi-VN") + " đ";
+
+              modal.style.display = "flex";
+
               gioHang = [];
               localStorage.removeItem("trendy_cart");
               capNhatGiaoDienGioHang();
@@ -320,6 +412,18 @@
             console.error("Error:", error);
             alert("Có lỗi xảy ra khi thanh toán!");
           });
+      }
+
+      function xemChiTietHoaDon() {
+        const invoiceId = document
+          .getElementById("invoice-id")
+          .textContent.replace("#", "");
+        window.location.href = "/user/chi-tiet-hoa-don/" + invoiceId;
+      }
+
+      function donHangMoi() {
+        document.getElementById("modal-hoa-don").style.display = "none";
+        switchTab("san-pham");
       }
 
       function capNhatThongTin(event) {

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='css/reset.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/danh_sach_hoa_don.css') }}"
+    />
+    <title>Danh sách hoá đơn</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📊 Danh sách hoá đơn bán hàng</h1>
+
+      <div class="thong_ke">
+        <div class="stat-item">
+          <div class="stat-label">Tổng doanh số</div>
+          <div class="stat-value">{{ '{:,}'.format(tong_doanh_so) }} đ</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Tổng số hoá đơn</div>
+          <div class="stat-value">{{ danh_sach_hoa_don|length }}</div>
+        </div>
+      </div>
+
+      <div class="menu">
+        <a href="/nhap-hang">← Quay lại nhập hàng</a>
+      </div>
+
+      {% if danh_sach_hoa_don %}
+      <table>
+        <thead>
+          <tr>
+            <th>ID Hoá đơn</th>
+            <th>Tên khách hàng</th>
+            <th>Ngày bán</th>
+            <th>Tổng tiền</th>
+            <th>Số lượng sản phẩm</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for hoa_don in danh_sach_hoa_don %}
+          <tr>
+            <td><strong>#{{ hoa_don.id_hoa_don }}</strong></td>
+            <td>{{ hoa_don.tai_khoan.ten_dang_nhap }}</td>
+            <td>
+              {{ hoa_don.ngay_ban.strftime('%d/%m/%Y %H:%M:%S') if
+              hoa_don.ngay_ban else 'N/A' }}
+            </td>
+            <td class="gia">{{ '{:,}'.format(hoa_don.tong_tien) }} đ</td>
+            <td>{{ hoa_don.chi_tiet_hoa_don|length }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <p>Chưa có hoá đơn nào</p>
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
