@@ -58,7 +58,12 @@
         <div class="product-grid">
           {%for san_pham in nhieu_san_pham%}
           <div class="product-card">
-            <div class="product-img">{{san_pham.img_url}}</div>
+            <div class="product-img">
+              <img
+                src="{{ url_for('static', filename='img/' + san_pham.img_url) }}"
+                alt="{{ san_pham.ten_san_pham }}"
+              />
+            </div>
             <div class="product-info">
               <div class="product-title">{{san_pham.ten_san_pham}}</div>
               <div class="product-price">{{san_pham.gia_ban}} Đ</div>
