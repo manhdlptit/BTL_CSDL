@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/reset.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/quan_ly_san_pham.css') }}"
+    />
+    <title>Quản Lý Sản Phẩm</title>
+    
+  </head>
+  <body>
+    <div class="container">
+      <a href="{{ url_for('admin.nhan_du_lieu_nhap_hang') }}" class="btn-back"
+        >← Quay lại</a
+      >
+
+      <div class="header">
+        <h1>Quản Lý Sản Phẩm</h1>
+        <a href="{{ url_for('admin.nhan_du_lieu_nhap_hang') }}" class="btn-add"
+          >+ Thêm Sản Phẩm Mới</a
+        >
+      </div>
+
+      {% if danh_sach_san_pham %}
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Hình Ảnh</th>
+              <th>Mã SP</th>
+              <th>Tên Sản Phẩm</th>
+              <th>Kích Cỡ</th>
+              <th>Giá Nhập</th>
+              <th>Giá Bán</th>
+              <th>Tồn Kho</th>
+              <th>Hành Động</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sp in danh_sach_san_pham %}
+            <tr>
+              <td>
+                {% if sp.img_url %}
+                <img
+                  src="{{ url_for('static', filename='img/' + sp.img_url) }}"
+                  alt="{{ sp.ten_san_pham }}"
+                  class="img-preview"
+                />
+                {% else %}
+                <span style="color: #999">Không có ảnh</span>
+                {% endif %}
+              </td>
+              <td><strong>{{ sp.ma_san_pham }}</strong></td>
+              <td>{{ sp.ten_san_pham }}</td>
+              <td>{{ sp.kich_co }}</td>
+              <td>{{ sp.gia_nhap | default(0) | int }}đ</td>
+              <td>{{ sp.gia_ban | default(0) | int }}đ</td>
+              <td>{{ sp.so_luong_ton_kho | default(0) | int }}</td>
+              <td>
+                <div class="action-buttons">
+                  <a
+                    href="{{ url_for('admin.sua_san_pham', id_san_pham=sp.id_san_pham) }}"
+                    class="btn-edit"
+                    >✏️ Sửa</a
+                  >
+                  <button
+                    class="btn-delete"
+                    onclick="xoaSanPham( {{ sp.id_san_pham }}, '{{ sp.ten_san_pham }}')"
+                  >
+                    🗑️ Xóa
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="table-container">
+        <div class="empty-state">
+          <p>
+            Chưa có sản phẩm nào.
+            <a href="{{ url_for('admin.nhan_du_lieu_nhap_hang') }}"
+              >Thêm sản phẩm mới</a
+            >
+          </p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <script>
+      function xoaSanPham(id, ten) {
+        if (confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${ten}" không?`)) {
+          const targetUrl =
+            `{{ url_for('admin.xoa_san_pham', id_san_pham=0) }}`.replace(
+              "0",
+              id,
+            );
+
+          fetch(targetUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                alert(data.message);
+                location.reload();
+              } else {
+                alert(data.message);
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("Có lỗi xảy ra");
+            });
+        }
+      }
+    </script>
+  </body>
+</html>

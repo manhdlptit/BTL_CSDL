@@ -17,19 +17,32 @@
     <div class="card">
       <div class="card-header">
         <h2>Tạo Phiếu Nhập Hàng</h2>
-        <a
-          href="{{ url_for('admin.danh_sach_hoa_don') }}"
-          style="
-            margin-left: auto;
-            padding: 8px 16px;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 14px;
-          "
-          >📊 Xem Danh Sách Hoá Đơn</a
-        >
+        <div style="margin-left: auto; display: flex; gap: 10px">
+          <a
+            href="{{ url_for('admin.quan_ly_san_pham') }}"
+            style="
+              padding: 8px 16px;
+              background: #27ae60;
+              color: white;
+              text-decoration: none;
+              border-radius: 4px;
+              font-size: 14px;
+            "
+            >🏪 Quản Lý Sản Phẩm</a
+          >
+          <a
+            href="{{ url_for('admin.danh_sach_hoa_don') }}"
+            style="
+              padding: 8px 16px;
+              background: #667eea;
+              color: white;
+              text-decoration: none;
+              border-radius: 4px;
+              font-size: 14px;
+            "
+            >📊 Xem Danh Sách Hoá Đơn</a
+          >
+        </div>
       </div>
       <div class="card-body">
         <form

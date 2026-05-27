@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/reset.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/sua_san_pham.css') }}"
+    />
+    <title>Sửa Sản Phẩm</title>
+    
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Sửa Sản Phẩm</h1>
+        <p>Cập nhật thông tin sản phẩm</p>
+      </div>
+
+      <form method="POST">
+        <div class="form-group">
+          <label for="ma_san_pham">Mã Sản Phẩm (không thể thay đổi)</label>
+          <input
+            type="text"
+            id="ma_san_pham"
+            value="{{ san_pham.ma_san_pham }}"
+            disabled
+            style="background: #f5f5f5; cursor: not-allowed"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="ten_san_pham">Tên Sản Phẩm *</label>
+          <input
+            type="text"
+            id="ten_san_pham"
+            name="ten_san_pham"
+            value="{{ san_pham.ten_san_pham }}"
+            required
+          />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="kich_co">Kích Cỡ *</label>
+            <input
+              type="text"
+              id="kich_co"
+              name="kich_co"
+              value="{{ san_pham.kich_co }}"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="id_loai_san_pham">Loại Sản Phẩm *</label>
+            ``
+            <select id="id_loai_san_pham" name="id_loai_san_pham" required>
+                
+  <option value="">-- Chọn loại --</option>
+  {% for loai in danh_sach_loai %}
+  <option value="{{ loai.id_loai_san_pham }}" {% if loai.id_loai_san_pham == san_pham.id_loai_san_pham %}selected{% endif %}>
+    {{ loai.ten_loai_san_pham }}
+  </option>
+  {% endfor %}
+</select>
+
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="mo_ta">Mô Tả</label>
+          <textarea id="mo_ta" name="mo_ta">{{ san_pham.mo_ta }}</textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="gia_nhap">Giá Nhập (VNĐ) *</label>
+            <input
+              type="number"
+              id="gia_nhap"
+              name="gia_nhap"
+              value="{{ san_pham.gia_nhap }}"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="gia_ban">Giá Bán (VNĐ) *</label>
+            <input
+              type="number"
+              id="gia_ban"
+              name="gia_ban"
+              value="{{ san_pham.gia_ban }}"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="img_url">Link Hình Ảnh</label>
+          <input
+            type="text"
+            id="img_url"
+            name="img_url"
+            value="{{ san_pham.img_url }}"
+            placeholder="tên-file.jpg"
+          />
+          {% if san_pham.img_url %}
+          <p style="font-size: 12px; color: #666; margin-top: 8px">
+            Ảnh hiện tại:
+          </p>
+          <img
+            src="{{ url_for('static', filename='img/' + san_pham.img_url) }}"
+            alt="{{ san_pham.ten_san_pham }}"
+            class="img-preview"
+          />
+          {% endif %}
+        </div>
+
+        <div class="button-group">
+          <button type="submit" class="btn btn-save">💾 Lưu Thay Đổi</button>
+          <a
+            href="{{ url_for('admin.quan_ly_san_pham') }}"
+            class="btn btn-cancel"
+            >❌ Hủy</a
+          >
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

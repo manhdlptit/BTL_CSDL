@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 load_dotenv()
 from flask import Blueprint, redirect, url_for, render_template, session, request, jsonify
-from app.blueprints.model import SanPham, db, HoaDon, ChiTietHoaDon, TaiKhoan
+from app.blueprints.model import SanPham, db, HoaDon, ChiTietHoaDon, TaiKhoan, LoaiSanPham
 from datetime import datetime
 
 
@@ -14,7 +14,6 @@ def san_pham():
     if not session.get('logged_in'):
         return redirect(url_for('auth.login'))
 
-    # thong tin user
     du_lieu_user = {
         "ten_dang_nhap" : session.get("ten_dang_nhap"),
         "email": session.get('email'),
@@ -22,18 +21,30 @@ def san_pham():
         "dia_chi": session.get('dia_chi')
     }
 
-    nhieu_san_pham = SanPham.query.all()
+    danh_sach_loai = LoaiSanPham.query.all()
 
+    tim_kiem = request.args.get("q", "").strip()
+    cac_loai_duoc_chon = request.args.getlist("loai")
 
-    # thanh tim kiem
-    tim_kiem = request.args.get("q",'').strip()
+    query = SanPham.query
 
     if tim_kiem:
-        nhieu_san_pham = SanPham.query.filter(SanPham.ten_san_pham.ilike(f"%{tim_kiem}%")).all()
+        query = query.filter(SanPham.ten_san_pham.ilike(f"%{tim_kiem}%"))
 
+    if cac_loai_duoc_chon:
+        cac_id_loai = [int(x) for x in cac_loai_duoc_chon]
+        query = query.filter(SanPham.id_loai_san_pham.in_(cac_id_loai))
 
+    nhieu_san_pham = query.all()
 
-    return render_template("san_pham.html", nhieu_san_pham = nhieu_san_pham, du_lieu_user = du_lieu_user, tim_kiem = tim_kiem)
+    return render_template(
+        "san_pham.html", 
+        nhieu_san_pham=nhieu_san_pham, 
+        du_lieu_user=du_lieu_user, 
+        tim_kiem=tim_kiem,
+        danh_sach_loai=danh_sach_loai,
+        cac_loai_duoc_chon=cac_loai_duoc_chon
+    )
 
 @user.route("/thanh-toan", methods=["GET", "POST"])
 def thanh_toan():

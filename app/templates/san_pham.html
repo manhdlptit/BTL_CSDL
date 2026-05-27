@@ -12,6 +12,9 @@
       href="{{ url_for('static', filename='css/san_pham.css') }}"
     />
     <title>Cửa Hàng Thời Trang Trendy</title>
+    <style>
+      
+    </style>
   </head>
   <body>
     <nav class="navbar">
@@ -26,6 +29,9 @@
               name="q"
               value="{{ tim_kiem }}"
             />
+            {% for loai_id in cac_loai_duoc_chon %}
+              <input type="hidden" name="loai" value="{{ loai_id }}">
+            {% endfor %}
             <button type="submit">🔍</button>
           </form>
         </div>
@@ -54,51 +60,88 @@
     </nav>
     <main class="main-content">
       <div id="tab-san-pham" class="tab-content active">
-        <h2 style="margin-bottom: 20px">Sản Phẩm Mới Nhất</h2>
-        <div class="product-grid">
-          {%for san_pham in nhieu_san_pham%}
-          <div class="product-card">
-            <div class="product-img">
-              <img
-                src="{{ url_for('static', filename='img/' + san_pham.img_url) }}"
-                alt="{{ san_pham.ten_san_pham }}"
-              />
-            </div>
-            <div class="product-info">
-              <div class="product-title">{{san_pham.ten_san_pham}}</div>
-              <div class="product-price">{{san_pham.gia_ban}} Đ</div>
-              <div
-                style="
-                  display: flex;
-                  gap: 10px;
-                  align-items: center;
-                  margin-bottom: 10px;
-                "
-              >
-                <input
-                  type="number"
-                  class="quantity-input"
-                  min="1"
-                  value="1"
-                  style="width: 60px; padding: 8px"
-                />
-                <button
-                  class="btn-add-cart"
-                  data-id="{{ san_pham.id_san_pham }}"
-                  data-name="{{ san_pham.ten_san_pham }}"
-                  data-price="{{ san_pham.gia_ban }}"
-                >
-                  Thêm vào giỏ
-                </button>
+        {% if tim_kiem %}
+        <p style="margin-bottom: 15px;">Kết quả tìm kiếm cho từ khóa: <strong>"{{ tim_kiem }}"</strong></p>
+        {% endif %}
+
+        <div class="shop-layout">
+          
+          <aside class="filter-sidebar">
+            <div class="filter-title">Danh Mục Sản Phẩm</div>
+            <form action="{{ url_for('user.san_pham') }}" method="get">
+              {% if tim_kiem %}
+                <input type="hidden" name="q" value="{{ tim_kiem }}">
+              {% endif %}
+              
+              <div class="filter-group">
+                {% for loai in danh_sach_loai %}
+                <label class="filter-item">
+                  <input 
+                    type="checkbox" 
+                    name="loai" 
+                    value="{{ loai.id_loai_san_pham }}"
+                    {% if loai.id_loai_san_pham|string in cac_loai_duoc_chon %}checked{% endif %}
+                  >
+                  <span>{{ loai.ten_loai_san_pham }}</span>
+                </label>
+                {% endfor %}
               </div>
+              
+              <button type="submit" class="btn-filter-submit">🔀 Áp Dụng Lọc</button>
+              {% if cac_loai_duoc_chon or tim_kiem %}
+                <a href="{{ url_for('user.san_pham') }}" style="display: block; text-align: center; margin-top: 10px; color: #e74c3c; text-decoration: none; font-size: 14px;">Xóa bộ lọc ✕</a>
+              {% endif %}
+            </form>
+          </aside>
+
+          <section class="products-display">
+            <div class="product-grid">
+              {% for san_pham in nhieu_san_pham %}
+              <div class="product-card">
+                <div class="product-img">
+                  <img
+                    src="{{ url_for('static', filename='img/' + san_pham.img_url) }}"
+                    alt="{{ san_pham.ten_san_pham }}"
+                  />
+                </div>
+                <div class="product-info">
+                  <div class="product-title">{{san_pham.ten_san_pham}}</div>
+                  <div class="product-price">{{ "{:,.0f}".format(san_pham.gia_ban) }} Đ</div>
+                  <div
+                    style="
+                      display: flex;
+                      gap: 10px;
+                      align-items: center;
+                      margin-bottom: 10px;
+                    "
+                  >
+                    <input
+                      type="number"
+                      class="quantity-input"
+                      min="1"
+                      value="1"
+                      style="width: 60px; padding: 8px"
+                    />
+                    <button
+                      class="btn-add-cart"
+                      data-id="{{ san_pham.id_san_pham }}"
+                      data-name="{{ san_pham.ten_san_pham }}"
+                      data-price="{{ san_pham.gia_ban }}"
+                    >
+                      Thêm vào giỏ
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {% else %}
+              <p style="grid-column: 1/-1; text-align: center; color: #999; padding: 40px 0;">Không tìm thấy sản phẩm nào phù hợp với bộ lọc.</p>
+              {% endfor %}
             </div>
-          </div>
-          {%endfor%}
+          </section>
+
         </div>
       </div>
-      {% if tim_kiem %}
-      <p>Kết quả tìm kiếm cho từ khóa: <strong>"{{ tim_kiem }}"</strong></p>
-      {% endif %}
+
       <div id="tab-gio-hang" class="tab-content">
         <h2 style="margin-bottom: 20px">Giỏ Hàng Của Bạn</h2>
         <div class="cart-container"></div>
@@ -284,9 +327,7 @@
         }
 
         localStorage.setItem("trendy_cart", JSON.stringify(gioHang));
-
         capNhatGiaoDienGioHang();
-
         alert(`Đã thêm "${name}" vào giỏ hàng!`);
       }
 

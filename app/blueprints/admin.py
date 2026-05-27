@@ -130,3 +130,67 @@ def thong_ke_doanh_so():
         "tong_doanh_so": tong_doanh_so,
         "so_hoa_don": so_hoa_don
     })
+
+@admin.route("/quan-ly-san-pham")
+def quan_ly_san_pham():
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+    if session.get("vai_tro") != "admin":
+        return "Bạn không phải là admin, không được phép thực hiện trong trang này", 403
+
+    danh_sach_san_pham = SanPham.query.all()
+    return render_template("quan_ly_san_pham.html", danh_sach_san_pham=danh_sach_san_pham)
+
+@admin.route("/sua-san-pham/<int:id_san_pham>", methods=["GET", "POST"])
+def sua_san_pham(id_san_pham):
+    if not session.get('logged_in'):
+        return redirect(url_for('auth.login'))
+    if session.get("vai_tro") != "admin":
+        return "Bạn không phải là admin, không được phép thực hiện trong trang này", 403
+
+    san_pham = SanPham.query.get(id_san_pham)
+    if not san_pham:
+        return "Không tìm thấy sản phẩm", 404
+
+    if request.method == "POST":
+        try:
+            san_pham.ten_san_pham = request.form.get("ten_san_pham")
+            san_pham.kich_co = request.form.get("kich_co")
+            san_pham.mo_ta = request.form.get("mo_ta", "")
+            san_pham.gia_nhap = int(request.form.get("gia_nhap"))
+            san_pham.gia_ban = int(request.form.get("gia_ban"))
+            san_pham.id_loai_san_pham = int(request.form.get("id_loai_san_pham"))
+            san_pham.img_url = request.form.get("img_url", "")
+
+            db.session.commit()
+            return redirect(url_for("admin.quan_ly_san_pham"))
+        except Exception as e:
+            db.session.rollback()
+            return f"Đã xảy ra lỗi: {str(e)}", 500
+
+    danh_sach_loai = LoaiSanPham.query.all()
+    return render_template("sua_san_pham.html", san_pham=san_pham, danh_sach_loai=danh_sach_loai)
+
+    
+@admin.route("/xoa-san-pham/<int:id_san_pham>", methods=["POST"])
+def xoa_san_pham(id_san_pham):
+    if not session.get('logged_in'):
+        return jsonify({"success": False, "message": "Bạn cần đăng nhập"}), 401
+    if session.get("vai_tro") != "admin":
+        return jsonify({"success": False, "message": "Bạn không phải admin"}), 403
+
+    san_pham = SanPham.query.get(id_san_pham)
+    if not san_pham:
+        return jsonify({"success": False, "message": "Không tìm thấy sản phẩm"}), 404
+
+    try:
+        ChiTietPhieuNhap.query.filter_by(id_san_pham=id_san_pham).delete()
+        
+        ChiTietHoaDon.query.filter_by(id_san_pham=id_san_pham).delete()
+        
+        db.session.delete(san_pham)
+        db.session.commit()
+        return jsonify({"success": True, "message": "Xóa sản phẩm và lịch sử liên quan thành công!"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "message": f"Đã xảy ra lỗi: {str(e)}"}), 500
